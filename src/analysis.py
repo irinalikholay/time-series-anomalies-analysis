@@ -23,12 +23,18 @@ print("Total days:", df.shape[0])
 print("\n*** DESCRIPTIVE STATISTICS ***")
 print(df["revenue"].describe())
 
-plt.figure()
+plt.figure(figsize=(12,5))
 plt.plot(df["date"], df["revenue"])
 plt.title("Daily Revenue Over Time (Raw Data)")
 plt.xlabel("Date")
 plt.ylabel("Revenue")
+plt.savefig(
+    PROJECT_ROOT / "visuals" / "daily_revenue_raw.png",
+    bbox_inches="tight"
+)
 plt.show() 
+plt.close()
+
 
 print("\n*** TIME AXIS VALIDATION ***")
 
@@ -112,7 +118,10 @@ plt.title("Daily Revenue with Detected Anomalies")
 plt.xlabel("Date")
 plt.ylabel("Revenue")
 plt.legend()
-
+plt.savefig(
+    PROJECT_ROOT / "visuals" / "daily_revenue_with_anomalies.png",
+    bbox_inches="tight"
+)
 plt.show()
 
 # Save clean dataset ( restored time axis , no imputation yet)
