@@ -28,4 +28,95 @@ plt.plot(df["date"], df["revenue"])
 plt.title("Daily Revenue Over Time (Raw Data)")
 plt.xlabel("Date")
 plt.ylabel("Revenue")
+plt.show() 
+
+print("\n*** TIME AXIS VALIDATION ***")
+
+df = df.sort_values("date")
+
+full_date_range = pd.date_range(
+    start=df["date"].min(),
+    end=df["date"].max(),
+    freq="D"
+)
+
+missing_dates = full_date_range.difference(df["date"])
+
+print("Expected number of days:", len(full_date_range))
+print("Actual number of days:", df.shape[0])
+print("Missing days:", len(missing_dates))
+
+if len(missing_dates) > 0:
+    print("\nMissing dates detected:")
+    print(missing_dates)
+else:
+    print("\nNo missing dates detected.")
+
+print("\n*** RESTORING TIME AXIS ***")
+
+df_full = (
+    df.set_index("date")
+    .reindex(full_date_range)
+    .reset_index()
+)
+
+# Rename index column back to "date"
+df_full = df_full.rename(columns={"index": "date"})
+
+
+df_full_columns = ["date", "revenue"]
+
+print("Rows after restoring time axis:", df_full.shape[0])
+print("Missing revenue values after restoration:")
+print(df_full["revenue"].isna().sum())
+
+print("\n*** ANOMALY DETECTION (IQR METHOD) ***")
+
+q1 = df_full["revenue"].quantile(0.25)
+q3 = df_full["revenue"].quantile(0.75)
+iqr = q3 - q1 
+
+lower_bound = q1 - 1.5 * iqr
+upper_bound = q3 + 1.5 * iqr
+
+print("Lower bound:", lower_bound)
+print("Upper bound:", upper_bound)
+
+anomalies = df_full[
+    (df_full["revenue"] < lower_bound)  |
+    (df_full["revenue"] > upper_bound)
+]
+
+print("Anomalies count:", anomalies.shape[0])
+
+plt.figure(figsize=(12, 5))
+
+# Main time series 
+plt.plot(
+    df_full["date"],
+    df_full["revenue"],
+    label="Daily revenue",
+    alpha=0.6
+)
+
+# Overlay anomalies 
+plt.scatter(
+    anomalies["date"],
+    anomalies["revenue"],
+    color="red",
+    label="Anomalies",
+    zorder=5
+)
+
+plt.title("Daily Revenue with Detected Anomalies")
+plt.xlabel("Date")
+plt.ylabel("Revenue")
+plt.legend()
+
 plt.show()
+
+# Save clean dataset ( restored time axis , no imputation yet)
+
+processed_path = PROJECT_ROOT / "data" / "processed" / "daily_revenue_clean.csv"
+df_full.to_csv(processed_path, index=False)
+print(f"Clean dataset saved to: {processed_path}")
