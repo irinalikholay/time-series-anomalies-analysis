@@ -129,3 +129,68 @@ plt.show()
 processed_path = PROJECT_ROOT / "data" / "processed" / "daily_revenue_clean.csv"
 df_full.to_csv(processed_path, index=False)
 print(f"Clean dataset saved to: {processed_path}")
+
+
+
+print("\n*** LOAD CLEAN DATA ***")
+PROCESSED_DATA_PATH = PROJECT_ROOT / "data" / "processed" / "daily_revenue_clean.csv"
+df_clean = pd.read_csv(PROCESSED_DATA_PATH)
+df_clean["date"] = pd.to_datetime(df_clean["date"])
+
+print(df_clean.info())
+
+
+print("\n*** METRICS COMPARISON ( RAW vs CLEAN ) ***")
+
+raw_mean = df["revenue"].mean()
+clean_mean = df_clean["revenue"].mean()
+
+raw_median = df["revenue"].median()
+clean_median = df_clean["revenue"].median()
+
+print("Raw mean revenue:", raw_mean)
+print("Clean mean revenue:", clean_mean)
+
+print("Raw median revenue:", raw_median)
+print("Clean median revenue", clean_median)
+
+
+print("\n*** MOVING AVERAGE TREND ***")
+
+df_clean = df_clean.sort_values("date")
+
+df_clean["rolling_mean_7d"] = (
+    df_clean["revenue"]
+    .rolling(window=7, min_periods=1)
+    .mean()
+)
+
+plt.figure(figsize=(12, 5))
+
+# Clean daily revenue 
+plt.plot(
+    df_clean["date"],
+    df_clean["revenue"],
+    label="Clean daily revenue",
+    alpha=0.5
+)
+
+# 7-day moving average
+plt.plot(
+    df_clean["date"],
+    df_clean["rolling_mean_7d"],
+    label="7-day moving average",
+    linewidth=2
+)
+
+plt.title("Clean Daily Revenue with 7-Days Moving Average")
+plt.xlabel("Date")
+plt.ylabel("Revenue")
+plt.legend()
+
+plt.savefig(
+    PROJECT_ROOT / "visuals" / "clean_revenue_trend.png",
+    bbox_inches="tight"
+)
+plt.show()
+plt.close()
