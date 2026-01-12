@@ -58,3 +58,31 @@ This highlights the need for data validation and preprocessing before using the 
 
 The raw time series data cannot be considered reliable in its current form.
 Before performing any trend analysis, forecasting, or business evaluation, the dataset must be cleaned and validated to address missing dates and anomalous values.
+
+
+## 5. Insights & Business Interpretation
+
+After cleaning the time series data and restoring the full daily timeline, the dataset becomes suitable for meaningful analysis.
+
+## Key insights
+
+- Missing dates and extreme revenue spikes had a significant impact on raw metrics.
+- Average daily revenue in the raw dataset was heavily influenced by a small number of extreme values.
+- After cleaning, central tendency metrics (mean and median) better reflect typical daily performance.
+- Short-term fluctuations become easier to interpret once anomalies are identified and visualized separately.
+
+## Business interpretation
+
+- Raw revenue data may lead to incorrect conclusions about growth and performance.
+- Sudden spikes should not be immediately interpreted as successful business events without validation.
+- Trend analysis and forecasting should always be performed on validated and cleaned time series data.
+
+## Limitations
+
+- Anomaly detection was based on a statistical method (IQR) and may flag rare but legitimate business events.
+- Missing revenue values were not imputed, which may affect short-term trend smoothness.
+
+### Conclusion
+
+This analysis demonstrates the importance of data validation and preprocessing when working with time series data.
+Reliable business insights require a clean and consistent temporal structure, especially before applying advanced analytics or forecasting models.
